@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenRoles — Careers Directory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F5F1E6;
+    --ink: #14140F;
+    --ink-dim: #55534A;
+    --blue: #1C3F94;
+    --red: #D6402C;
+    --yellow: #E8B930;
+    --white: #FFFFFF;
+    --max: 1040px;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    margin:0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family:'Archivo', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .display{ font-family:'Archivo Black', sans-serif; }
+  .wrap{ max-width: var(--max); margin:0 auto; padding: 0 24px; }
+  a{ color: inherit; }
+
+  .topbar{ border-bottom: 3px solid var(--ink); background: var(--paper); }
+  .topbar-inner{
+    max-width: var(--max); margin:0 auto; padding: 20px 24px;
+    display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .brand{ font-size: 24px; letter-spacing: -0.01em; }
+  .brand .dot{ color: var(--red); }
+  .topbar-right{ display:flex; align-items:center; gap: 20px; }
+  .datetime{ text-align:right; line-height:1.25; }
+  .datetime .time{ font-size: 15px; font-weight: 800; }
+  .datetime .date{ font-size: 11.5px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.04em; }
+  .user-chip{ display:flex; align-items:center; gap: 12px; font-size: 12.5px; }
+  .user-chip span{ font-weight: 700; }
+  .user-chip a{ cursor:pointer; text-decoration: underline; }
+
+  .login-screen{ min-height: 100vh; display:flex; align-items:center; justify-content:center; position: relative; overflow:hidden; }
+  .login-shape{ position:absolute; border-radius: 50%; }
+  .shape-1{ width:380px; height:380px; background: var(--yellow); top:-120px; left:-120px; }
+  .shape-2{ width:260px; height:260px; background: var(--blue); bottom:-100px; right:-80px; }
+  .shape-3{ width:140px; height:140px; background: var(--red); bottom:60px; left:8%; }
+  .login-card{
+    position:relative; z-index:2; width: 100%; max-width: 400px;
+    background: var(--white); border: 3px solid var(--ink); padding: 40px 34px;
+    box-shadow: 8px 8px 0 var(--ink);
+  }
+  .login-mark{ font-size: 26px; margin-bottom: 18px; }
+  .login-card h2{ font-size: 20px; margin: 0 0 8px; font-weight: 800; }
+  .login-card .sub{ font-size: 14px; color: var(--ink-dim); margin-bottom: 26px; }
+  .google-btn{
+    width:100%; display:flex; align-items:center; justify-content:center; gap: 10px; padding: 13px;
+    background: var(--white); border: 2px solid var(--ink); font-family:'Archivo', sans-serif;
+    font-size: 14.5px; font-weight: 700; color: var(--ink); cursor:pointer;
+  }
+  .google-btn:hover{ background: var(--paper); }
+  .login-note{ margin-top: 14px; font-size: 12px; color: var(--ink-dim); display:none; }
+  .login-note.show{ display:block; }
+  .login-hint{ margin-top: 20px; font-size: 11.5px; color: var(--ink-dim); line-height:1.5; }
+  .hidden{ display:none !important; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap: 14px; padding: 20px 0 6px; }
+  .legend-item{ display:flex; align-items:center; gap: 8px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; }
+  .legend-swatch{ width: 16px; height: 16px; border: 2px solid var(--ink); }
+
+  main{ padding: 10px 0 70px; }
+  .section-tag{
+    display:inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.06em; border: 2px solid var(--ink); padding: 4px 12px; margin: 20px 0 18px;
+  }
+  .tile-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 900px){ .tile-grid{ grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px){ .tile-grid{ grid-template-columns: 1fr; } }
+
+  .tile{
+    background: var(--white); border: 3px solid var(--ink); padding: 20px; cursor:pointer; position:relative;
+    transition: transform 0.12s ease, box-shadow 0.12s ease; box-shadow: 5px 5px 0 var(--ink);
+  }
+  .tile:hover{ transform: translate(-3px,-3px); box-shadow: 8px 8px 0 var(--ink); }
+  .tile .cat-bar{ height: 8px; margin: -20px -20px 16px; }
+  .tile .cname{ font-size: 17px; font-weight: 800; margin-bottom: 6px; line-height:1.2; }
+  .tile .ccat{ font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 16px; }
+  .tile .cnum{ font-size: 38px; font-weight: 800; font-family:'Archivo Black', sans-serif; line-height:1; }
+  .tile .clabel{ font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-dim); margin-top: 4px; }
+
+  .panel{ background: var(--white); border: 3px solid var(--ink); padding: 30px; }
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; font-size: 13px; font-weight: 700; cursor:pointer;
+    margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .back-link:hover{ color: var(--red); }
+
+  .panel-header{
+    display:flex; align-items:center; justify-content: space-between; gap: 14px; margin-bottom: 22px;
+    padding-bottom: 18px; border-bottom: 3px solid var(--ink); flex-wrap: wrap;
+  }
+  .panel-header h2{ margin:0; font-size: 24px; }
+  .cat-pill{ font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 14px; color: var(--white); }
+
+  .role-row{
+    display:flex; align-items:center; justify-content: space-between; padding: 18px 4px;
+    border-top: 2px solid var(--ink); cursor:pointer;
+  }
+  .role-row:first-child{ border-top:none; }
+  .role-row:hover{ background: var(--paper); }
+  .role-row .rt{ font-size: 16px; font-weight: 700; }
+  .role-row .rl{ font-size: 12.5px; color: var(--ink-dim); margin-top:4px; }
+  .role-row .arrow{ font-size: 20px; font-weight: 800; }
+
+  .job-title{ font-size: 26px; font-weight: 800; margin: 0 0 6px; }
+  .job-loc{ font-size: 13.5px; color: var(--ink-dim); margin-bottom: 26px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .job-desc-label{ font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+  .job-desc{ font-size: 15px; line-height: 1.75; max-width: 64ch; }
+
+  .apply-bar{
+    margin-top: 30px; padding-top: 22px; border-top: 3px solid var(--ink);
+    display:flex; align-items:center; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+  }
+  .apply-bar .note{ font-size: 12.5px; color: var(--ink-dim); max-width: 34ch; }
+  .apply-btn{
+    color: var(--white); font-weight: 800; font-size: 14.5px; text-transform: uppercase;
+    letter-spacing: 0.03em; padding: 14px 26px; text-decoration:none; border: 3px solid var(--ink);
+  }
+
+  .empty-state{ font-size: 14.5px; color: var(--ink-dim); text-align:center; padding: 40px 0; }
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="screen-login">
+  <div class="login-shape shape-1"></div>
+  <div class="login-shape shape-2"></div>
+  <div class="login-shape shape-3"></div>
+  <div class="login-card">
+    <div class="login-mark display">OPENROLES<span style="color:var(--red);">.</span></div>
+    <h2>Sign in to continue</h2>
+    <div class="sub">Sign in with Google to browse open roles and apply.</div>
+    <button class="google-btn" onclick="signInWithGoogle()">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84c-.21 1.13-.85 2.09-1.81 2.73v2.27h2.93c1.71-1.58 2.68-3.9 2.68-6.64z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.17l-2.93-2.27c-.81.55-1.85.87-3.03.87-2.33 0-4.3-1.57-5.01-3.68H.96v2.34C2.44 15.98 5.48 18 9 18z"/><path fill="#FBBC05" d="M3.99 10.75c-.18-.55-.29-1.13-.29-1.75s.11-1.2.29-1.75V4.91H.96C.35 6.12 0 7.52 0 9s.35 2.88.96 4.09l3.03-2.34z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.6-2.6C13.46.89 11.43 0 9 0 5.48 0 2.44 2.02.96 4.91l3.03 2.34C4.7 5.15 6.67 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+    <div class="login-note" id="login-note">Signing you in…</div>
+    <div class="login-hint">By continuing, your Google email is recorded for this app's user list.</div>
+  </div>
+</div>
+
+<div id="screen-app" class="hidden">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand display">OPENROLES<span class="dot">.</span></div>
+      <div class="topbar-right">
+        <div class="datetime">
+          <div class="time" id="clock-time">—:—</div>
+          <div class="date" id="clock-date">—</div>
+        </div>
+        <div class="user-chip">
+          <span id="user-email-display"></span>
+          <a onclick="handleSignOut()">Sign out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <div class="legend" id="legend"></div>
+    <div id="view-root">
+      <span class="section-tag">Companies</span>
+      <div class="tile-grid" id="tile-grid"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+  const CATEGORIES = {
+    "IT Services & Consulting": { color: "#1C3F94" },
+    "Product & SaaS":           { color: "#D6402C" },
+    "Engineering & Hardware":   { color: "#E8B930" }
+  };
+
+  const COMPANY_CATEGORY = {
+    "TCS": "IT Services & Consulting", "Cognizant": "IT Services & Consulting",
+    "Infosys": "IT Services & Consulting", "Wipro": "IT Services & Consulting",
+    "HCLTech": "IT Services & Consulting", "Accenture": "IT Services & Consulting",
+    "Capgemini": "IT Services & Consulting", "LTIMindtree": "IT Services & Consulting",
+    "Tech Mahindra": "IT Services & Consulting", "Hexaware": "IT Services & Consulting",
+    "Mphasis": "IT Services & Consulting", "DXC Technology": "IT Services & Consulting",
+    "NTT DATA": "IT Services & Consulting", "Virtusa": "IT Services & Consulting",
+    "Coforge": "IT Services & Consulting", "UST": "IT Services & Consulting",
+    "Kyndryl": "IT Services & Consulting", "Sutherland": "IT Services & Consulting",
+    "Movate": "IT Services & Consulting", "Prodapt": "IT Services & Consulting",
+    "Aspire Systems": "IT Services & Consulting",
+    "Zoho": "Product & SaaS", "Freshworks": "Product & SaaS", "Chargebee": "Product & SaaS",
+    "Ashok Leyland": "Engineering & Hardware", "Renault Nissan": "Engineering & Hardware",
+    "Continental Automotive": "Engineering & Hardware", "Infineon": "Engineering & Hardware",
+    "Bosch": "Engineering & Hardware", "ZF": "Engineering & Hardware"
+  };
+
+  const COMPANY_NAMES = Object.keys(COMPANY_CATEGORY);
+
+  const COMPANY_QUERY_OVERRIDE = {
+    "TCS": "Tata Consultancy Services",
+    "ZF": "ZF Friedrichshafen",
+    "UST": "UST Global",
+    "Zoho": "Zoho Corporation",
+    "Renault Nissan": "Renault Nissan India"
+  };
+  const COMPANY_MATCH_TOKENS = {
+    "TCS": ["tata consultancy", "tcs"],
+    "ZF": ["zf friedrichshafen", "zf group"],
+    "UST": ["ust global", "ust inc"],
+    "Zoho": ["zoho corporation", "zoho corp"],
+    "Renault Nissan": ["renault", "nissan", "rntbci"]
+  };
+
+  const ADZUNA_APP_ID = "dbf222e3";
+  const ADZUNA_APP_KEY = "cc605390503f70836dfbd16cc9d10cdb";
+  const COUNTRY = "in";
+
+  const companyState = {};
+  COMPANY_NAMES.forEach(name => { companyState[name] = { status: 'loading', jobs: [] }; });
+  let currentCompany = null;
+
+  function firstToken(name){ return name.toLowerCase().split(/[\s.]+/)[0]; }
+  function getMatchTokens(name){ return COMPANY_MATCH_TOKENS[name] || [firstToken(name)]; }
+
+  async function fetchCompanyJobs(name){
+    const query = COMPANY_QUERY_OVERRIDE[name] || name;
+    const url = `https://api.adzuna.com/v1/api/jobs/${COUNTRY}/search/1?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_APP_KEY}&results_per_page=50&what=${encodeURIComponent(query)}&content-type=application/json`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const tokens = getMatchTokens(name);
+    return (data.results || []).filter(j =>
+      j.company && j.company.display_name &&
+      tokens.some(t => j.company.display_name.toLowerCase().includes(t))
+    );
+  }
+
+  async function loadAllCompanies(){
+    for (let i = 0; i < COMPANY_NAMES.length; i++){
+      const name = COMPANY_NAMES[i];
+      try {
+        companyState[name] = { status: 'done', jobs: await fetchCompanyJobs(name) };
+      } catch (err) {
+        console.error('Adzuna fetch failed for', name, err);
+        companyState[name] = { status: 'error', jobs: [] };
+      }
+      if (!currentCompany) renderTileGrid();
+      if (i < COMPANY_NAMES.length - 1) await new Promise(r => setTimeout(r, 2200));
+    }
+  }
+
+  function renderLegend(){
+    document.getElementById('legend').innerHTML = Object.entries(CATEGORIES).map(([name, cat]) =>
+      `<span class="legend-item"><span class="legend-swatch" style="background:${cat.color};"></span>${name}</span>`
+    ).join('');
+  }
+
+  function renderTileGrid(){
+    const grid = document.getElementById('tile-grid');
+    if (!grid) return;
+    grid.innerHTML = COMPANY_NAMES.map(name => {
+      const cat = CATEGORIES[COMPANY_CATEGORY[name]];
+      const state = companyState[name];
+      let num = '…', label = 'loading';
+      if (state.status === 'done'){ num = state.jobs.length; label = 'open roles'; }
+      if (state.status === 'error'){ num = '–'; label = 'unavailable'; }
+      return `
+        <div class="tile" onclick="openCompany('${name.replace(/'/g, "\\'")}')">
+          <div class="cat-bar" style="background:${cat.color};"></div>
+          <div class="cname">${name}</div>
+          <div class="ccat">${COMPANY_CATEGORY[name]}</div>
+          <div class="cnum">${num}</div>
+          <div class="clabel">${label}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function openCompany(name){
+    currentCompany = name;
+    const state = companyState[name];
+    const cat = CATEGORIES[COMPANY_CATEGORY[name]];
+    const root = document.getElementById('view-root');
+
+    let bodyHtml;
+    if (state.status === 'loading'){
+      bodyHtml = `<div class="empty-state">Still loading live listings for ${name}…</div>`;
+    } else if (state.status === 'error' || state.jobs.length === 0){
+      bodyHtml = `<div class="empty-state">No matching openings found right now for ${name}.</div>`;
+    } else {
+      bodyHtml = state.jobs.map((job, i) => `
+        <div class="role-row" onclick="openJob(${i})">
+          <div>
+            <div class="rt">${job.title}</div>
+            <div class="rl">${job.location && job.location.display_name ? job.location.display_name : 'Location not specified'}</div>
+          </div>
+          <span class="arrow">→</span>
+        </div>
+      `).join('');
+    }
+
+    root.innerHTML = `
+      <span class="back-link" onclick="renderCompanyList()">← All companies</span>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>${name}</h2>
+          <span class="cat-pill" style="background:${cat.color};">${COMPANY_CATEGORY[name]}</span>
+        </div>
+        ${bodyHtml}
+      </div>
+    `;
+  }
+
+  function openJob(index){
+    const job = companyState[currentCompany].jobs[index];
+    const cat = CATEGORIES[COMPANY_CATEGORY[currentCompany]];
+    const root = document.getElementById('view-root');
+    root.innerHTML = `
+      <span class="back-link" onclick="openCompany('${currentCompany.replace(/'/g, "\\'")}')">← ${currentCompany} roles</span>
+      <div class="panel">
+        <div class="job-title">${job.title}</div>
+        <div class="job-loc">${currentCompany} · ${job.location && job.location.display_name ? job.location.display_name : ''}</div>
+        <div class="job-desc-label">Description</div>
+        <div class="job-desc">${job.description || 'No further description provided.'}</div>
+        <div class="apply-bar">
+          <span class="note">You'll be taken to the original job listing to apply.</span>
+          <a class="apply-btn" href="${job.redirect_url}" target="_blank" rel="noopener noreferrer" style="background:${cat.color};">Apply for this role →</a>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderCompanyList(){
+    currentCompany = null;
+    document.getElementById('view-root').innerHTML = `
+      <span class="section-tag">Companies</span>
+      <div class="tile-grid" id="tile-grid"></div>
+    `;
+    renderTileGrid();
+  }
+
+  function updateClock(){
+    const now = new Date();
+    document.getElementById('clock-time').textContent = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    document.getElementById('clock-date').textContent = now.toLocaleDateString([], {weekday:'short', day:'numeric', month:'short', year:'numeric'});
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, setDoc, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDzxe24Uyj9pgu7c8RpoWKptn4LyX8Etzs",
+    authDomain: "openroles-2ca85.firebaseapp.com",
+    projectId: "openroles-2ca85",
+    storageBucket: "openroles-2ca85.firebasestorage.app",
+    messagingSenderId: "268608284580",
+    appId: "1:268608284580:web:6bc7e847f825ea2e928331",
+    measurementId: "G-TCP9XWM152"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  window.signInWithGoogle = async function () {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      await setDoc(doc(db, "signed_in_users", user.uid), {
+        email: user.email,
+        name: user.displayName,
+        lastSignIn: serverTimestamp()
+      }, { merge: true });
+    } catch (err) {
+      console.error("Sign-in error:", err);
+      alert("Sign-in failed. Check that Google sign-in is enabled in your Firebase project.");
+    }
+  };
+
+  window.handleSignOut = function () {
+    signOut(auth);
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    const loginScreen = document.getElementById('screen-login');
+    const appScreen = document.getElementById('screen-app');
+    if (user) {
+      document.getElementById('user-email-display').textContent = user.email;
+      loginScreen.classList.add('hidden');
+      appScreen.classList.remove('hidden');
+      updateClock();
+      setInterval(updateClock, 1000);
+      renderLegend();
+      renderTileGrid();
+      loadAllCompanies();
+    } else {
+      loginScreen.classList.remove('hidden');
+      appScreen.classList.add('hidden');
+    }
+  });
+</script>
+
+</body>
+</html>
